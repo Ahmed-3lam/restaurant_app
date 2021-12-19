@@ -1,0 +1,119 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:resturant_side/src/presentation/constatns/colors.dart';
+import 'package:resturant_side/src/presentation/constatns/exporter.dart';
+import 'package:resturant_side/src/presentation/widgets/commonshadowcontainer.dart';
+
+class MyBarChartData extends StatefulWidget {
+  const MyBarChartData({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<MyBarChartData> createState() => _MyBarChartDataState();
+}
+
+class _MyBarChartDataState extends State<MyBarChartData>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  @override
+  void initState() {
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    _controller.forward();
+    super.initState();
+  }
+
+  List<double> dataY = [6, 7, 5, 4, 9, 11, 8, 5, .75, .75, .75, .75];
+  List<String> names = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return CommonShadowContainer(
+      margin: const EdgeInsets.only(left: 24, right: 24, top: 15, bottom: 10),
+      height: 200,
+      padding: const EdgeInsets.only(top: 12, bottom: 15, left: 10, right: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) => BarChart(
+                BarChartData(
+                    titlesData: FlTitlesData(
+                      bottomTitles: SideTitles(showTitles: false),
+                      topTitles: SideTitles(showTitles: false),
+                      rightTitles: SideTitles(showTitles: false),
+                      leftTitles: SideTitles(showTitles: false),
+                    ),
+                    borderData: FlBorderData(show: false),
+                    gridData: FlGridData(show: false),
+                    maxY: 15,
+                    minY: 0,
+                    barGroups: [
+                      ...dataY
+                          .map(
+                            (e) => BarChartGroupData(
+                                barsSpace: 10,
+                                x: 15,
+                                barRods: [
+                                  BarChartRodData(
+                                      colors: [ColorUtils.kcPrimary],
+                                      y: e.toDouble() * _controller.value,
+                                      width: 18,
+                                      borderRadius: const BorderRadius.vertical(
+                                          top: Radius.circular(5)))
+                                ]),
+                          )
+                          .toList(),
+                    ]),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ...names
+                    .map((e) => Text(
+                          e,
+                          style: FontStyleUtilities.t5(
+                              fontWeight: FWT.semiBold,
+                              fontColor:
+                                  ColorUtils.kcBlueButton.withOpacity(.70)),
+                        ))
+                    .toList()
+              ],
+            ),
+          ),
+          SpaceUtils.ks10.height(),
+          Text(
+            'Revenue',
+            style: FontStyleUtilities.h4(
+                fontWeight: FWT.bold,
+                fontColor: ColorUtils.kcBlueButton.withOpacity(1)),
+          ),
+          Text(
+            'INR 35000',
+            style: FontStyleUtilities.h2(
+                fontWeight: FWT.bold, fontColor: ColorUtils.kcPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+}
